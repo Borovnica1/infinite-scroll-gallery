@@ -3,6 +3,7 @@ const listViewIcon = document.querySelector('.list-view');
 const imagesView = document.querySelector('.images-view');
 
 const loader = document.querySelector('.loader-overlay');
+const bottomLine = document.querySelector('.bottom-of-container');
 
 function switchViewMode() {
   gridViewIcon.classList.toggle('view--active')
@@ -16,13 +17,18 @@ function startEndLoader() {
   loader.classList.toggle('loader-overlay--active');
 };
 
+function updateBottomLine(viewHeight) {
+  console.log('BBBB', bottomLine);
+  bottomLine.style.bottom = `${viewHeight + 200}px`;
+}
+
 async function getPhotos() {
   // while loop to prevent calling function while it is still loading
   //
   //
   //
   startEndLoader();
-  const response = await fetch('https://api.unsplash.com/photos/random?count=6&client_id=LVTQ3W33_bo9qp9FRXvnNs3DZZj8Bo9ucA84Aww9jU4');
+  const response = await fetch('https://api.unsplash.com/photos/random?count=18&client_id=LVTQ3W33_bo9qp9FRXvnNs3DZZj8Bo9ucA84Aww9jU4');
   const photosArray = await response.json();
 
   startEndLoader();
@@ -74,10 +80,23 @@ function displayPhotos(photosArray) {
       </div>`;
     imagesView.insertAdjacentHTML('beforeend', photoHtml);
   });
+
 };
 
 [gridViewIcon, listViewIcon].forEach(el => {
   el.addEventListener('click', switchViewMode);
 });
 
-getPhotos();
+let observer = new IntersectionObserver(entries => {
+  const vh = entries[0].rootBounds.height;
+
+  if (entries[0].boundingClientRect.y < 0) {
+    console.log("WE HIT THE BOTTOM");
+    getPhotos();
+    updateBottomLine(vh);
+  } else {
+    console.log("NOT AT BOTTOM!!!");
+  }
+});
+
+observer.observe(document.querySelector(".bottom-of-container"));
