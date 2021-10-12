@@ -33,7 +33,6 @@ a:hover {
   position: relative;
   width: 90%;
   max-width: 1175px;
-  background-color: var(--background-color);
   margin: auto;
   padding-top: 100px;
 }
@@ -42,7 +41,6 @@ header {
   display: flex;
   justify-content: end;
   align-items: center;
-  background-color: rgba(255, 0, 0, 0.164);
   grid-column: 1 / -1;
 }
 
@@ -187,6 +185,14 @@ header {
   display: block;
   margin-top: 15px;
   font-size: 14px;
+}
+
+.images-view--list .image__username-portfolio {
+  overflow-wrap: anywhere;
+}
+
+.images-view--list .image__username-portfolio a {
+  white-space: pre-wrap;
 }
 
 .loader-overlay {
@@ -350,4 +356,152 @@ header {
   align-items: center;
   border-radius: 50%;
   cursor: pointer;
+}
+
+@media (max-width: 900px) {
+  .lightbox-overlay__img-arrows {
+    width: 80%;
+  }
+}
+
+@media (max-width: 650px) {
+  .lightbox-overlay__img-arrows {
+    width: 75%;
+  }
+}
+
+@media (max-width: 580px) {
+  .container {
+    width: 95%;
+    padding-top: 50px;
+  }
+
+  .images-view--list .image__likes-downloads {
+    width: 250px;
+  }
+
+  .images-view--list .image__img {
+    width: 250px;
+  }
+
+  .images-view--list .images-view {
+    row-gap: 15px;
+    padding-bottom: 200px;
+  }
+
+  .images-view--grid {
+    grid-template-columns: repeat(auto-fill, 370px);
+  }
+
+  .images-view--grid .image__img {
+    width: 370px;
+    height: 220px;
+  }
+
+  .images-view--grid .image__likes-downloads {
+    width: 370px;
+  }
+
+  .images-view--grid {
+    grid-auto-rows: 300px;
+  }
+}
+
+@media (max-width: 530px) {
+  .lightbox__arrow--right {
+    right: -60px;
+  }
+  .lightbox__arrow--left {
+    left: -60px;
+  }
+}
+
+@media (max-width: 460px) {
+  .container {
+    width: 98%;
+    padding-top: 30px;
+  }
+
+  .lightbox-overlay__img-arrows {
+    width: 70%;
+  }
+
+  .images-view--list .images-view {
+    row-gap: 10px;
+    padding-bottom: 200px;
+  }
+
+  .images-view--list .image__user-bio {
+    display: none;
+  }
+
+  .images-view--list .image__user {
+    flex-direction: column;
+  }
+
+  .images-view--list .image__username-portfolio {
+    margin-top: 5px;
+  }
+}
+
+@media (max-width: 400px) {
+  .images-view--list .image__user {
+    font-size: 16px;
+  }
+
+  .images-view--grid {
+    grid-template-columns: repeat(auto-fill, 330px);
+  }
+
+  .images-view--grid .image__img {
+    width: 330px;
+  }
+
+  .images-view--grid .image__likes-downloads {
+    width: 330px;
+  }
+
+  .images-view--list .images-view {
+    row-gap: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .images-view--list .image__user {
+    font-size: 14px;
+  }
+  .lightbox__arrow--right {
+    right: -55px;
+  }
+  .lightbox__arrow--left {
+    left: -55px;
+  }
+
+  .images-view--list .image__likes-downloads {
+    width: 220px;
+  }
+
+  .images-view--list .image__img {
+    width: 220px;
+  }
+
+  .images-view--list .images-view {
+    row-gap: 5px;
+  }
+
+  .images-view--list .image__likes-downloads {
+    font-size: 14px;
+  }
+
+  .images-view--grid {
+    grid-template-columns: repeat(auto-fill, 310px);
+  }
+
+  .images-view--grid .image__img {
+    width: 310px;
+  }
+
+  .images-view--grid .image__likes-downloads {
+    width: 310px;
+  }
 }
