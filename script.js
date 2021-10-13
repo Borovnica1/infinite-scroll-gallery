@@ -1,78 +1,89 @@
-const gridViewIcon = document.querySelector('.grid-view');
-const listViewIcon = document.querySelector('.list-view');
-const imagesView = document.querySelector('.images-view');
+var myApplication = myApplication || {};
 
-const loader = document.querySelector('.loader-overlay');
-const bottomLine = document.querySelector('.bottom-of-container');
+myApplication.photoToAdd = 18;
+myApplication.allPhotos = [];
+myApplication.photoCnt = 0;
 
-const lightboxOverlay = document.querySelector('.lightbox-overlay');
-const lightboxATag = document.querySelector('.lightbox-overlay__img-arrows a');
-const lightboxImgTag = document.querySelector('.lightbox-overlay__img-arrows a img');
-const lightboxPhotoid = document.querySelector('.lightbox-overlay__photoId');
-const lightLeftArrow = document.querySelector('.lightbox__arrow--left');
-const lightRightArrow = document.querySelector('.lightbox__arrow--right');
-const lightboxClose = document.querySelector('.lightbox__close');
+myApplication.DOMElements = {
+  gridViewIcon: document.querySelector('.grid-view'),
+  listViewIcon: document.querySelector('.list-view'),
+  imagesView: document.querySelector('.images-view'),
+  
+  loader: document.querySelector('.loader-overlay'),
+  bottomLine: document.querySelector('.bottom-of-container'),
 
-const photoToAdd = 18;
-const allPhotos = [];
-let photoCnt = 0;
+  lightboxOverlay: document.querySelector('.lightbox-overlay'),
+  lightboxATag: document.querySelector('.lightbox-overlay__img-arrows a'),
+  lightboxImgTag: document.querySelector('.lightbox-overlay__img-arrows a img'),
+  lightboxPhotoid: document.querySelector('.lightbox-overlay__photoId'),
+  lightLeftArrow: document.querySelector('.lightbox__arrow--left'),
+  lightRightArrow: document.querySelector('.lightbox__arrow--right'),
+  lightboxClose: document.querySelector('.lightbox__close'),
+}
 
-function switchViewMode() {
-  gridViewIcon.classList.toggle('view--active')
-  listViewIcon.classList.toggle('view--active')
+myApplication.viewModes = {
+  switchViewMode: function() {
+    myApplication.DOMElements.gridViewIcon.classList.toggle('view--active')
+    myApplication.DOMElements.listViewIcon.classList.toggle('view--active')
+  
+    myApplication.DOMElements.imagesView.classList.toggle('images-view--grid');
+    myApplication.DOMElements.imagesView.classList.toggle('images-view--list');
+  },
+}
 
-  imagesView.classList.toggle('images-view--grid');
-  imagesView.classList.toggle('images-view--list');
+myApplication.loader = {
+  startEndLoader: function() {
+    myApplication.DOMElements.loader.classList.toggle('loader-overlay--active');
+  },
+
 };
 
-function startEndLoader() {
-  loader.classList.toggle('loader-overlay--active');
-};
+myApplication.bottomLine = {
+  updateBottomLine: function(viewHeight) {
+    myApplication.DOMElements.bottomLine.style.bottom = `${viewHeight + 200}px`;
+  },
 
-function updateBottomLine(viewHeight) {
-  bottomLine.style.bottom = `${viewHeight + 200}px`;
-};
-
-function displayPhotoInLightbox(photoId) {
-  if (photoId === -1) photoId = photoCnt-1;
-  else if (photoId === photoCnt) photoId = 0;
-
-  const photo = allPhotos[photoId];
-
-  lightboxImgTag.src = photo[0];
-  lightboxImgTag.alt = photo[2];
-  lightboxATag.href = photo[1];
-  lightboxATag.dataset['id'] = photoId;
-
-  lightboxPhotoid.textContent = `${photoId+1}/${photoCnt}`;
-};
-
-function openCloseLightbox() {
-  lightboxOverlay.classList.toggle('lightbox-overlay--active');
-  const photoId = this.dataset['id'];
-
-  if (lightboxOverlay.classList.contains('lightbox-overlay--active')) {
-    displayPhotoInLightbox(Number(photoId));
-  };
 };
 
 
+myApplication.lightbox = {
+  displayPhotoInLightbox: function(photoId) {
+    if (photoId === -1) photoId = myApplication.photoCnt-1;
+    else if (photoId === myApplication.photoCnt) photoId = 0;
+  
+    const photo = myApplication.allPhotos[photoId];
+  
+    myApplication.DOMElements.lightboxImgTag.src = photo[0];
+    myApplication.DOMElements.lightboxImgTag.alt = photo[2];
+    myApplication.DOMElements.lightboxATag.href = photo[1];
+    myApplication.DOMElements.lightboxATag.dataset['id'] = photoId;
+  
+    myApplication.DOMElements.lightboxPhotoid.textContent = `${photoId+1}/${myApplication.photoCnt}`;
+  },
 
-async function getPhotos() {
-  // while loop to prevent calling function while it is still loading
-  //
-  //
-  //
-  startEndLoader();
-  const response = await fetch(`https://api.unsplash.com/photos/random?count=${photoToAdd}&client_id=LVTQ3W33_bo9qp9FRXvnNs3DZZj8Bo9ucA84Aww9jU4`);
-  const photosArray = await response.json();
+  openCloseLightbox: function() {
+    myApplication.DOMElements.lightboxOverlay.classList.toggle('lightbox-overlay--active');
+    const photoId = this.dataset['id'];
+  
+    if (myApplication.DOMElements.lightboxOverlay.classList.contains('lightbox-overlay--active')) {
+      myApplication.lightbox.displayPhotoInLightbox(Number(photoId));
+    };
+  },
+}
 
-  startEndLoader();
-  displayPhotos(photosArray);
-};
+myApplication.api = {
+  getPhotos: async function() {
 
-function displayPhotos(photosArray) {
+    myApplication.loader.startEndLoader();
+    const response = await fetch(`https://api.unsplash.com/photos/random?count=${myApplication.photoToAdd}&client_id=LVTQ3W33_bo9qp9FRXvnNs3DZZj8Bo9ucA84Aww9jU4`);
+    const photosArray = await response.json();
+  
+    myApplication.loader.startEndLoader();
+    myApplication.displayPhotos(photosArray);
+  },
+}
 
+myApplication.displayPhotos = function(photosArray) {
   photosArray.forEach(photo => {
     let socialHtml = '';
     [photo.user.social.instagram_username,photo.user.social.paypal_email, photo.user.social.twitter_username].forEach((link, index) => {
@@ -91,7 +102,7 @@ function displayPhotos(photosArray) {
     const photoHtml = `
     <div class="image">
         <div class="image__img-likes-downloads">
-            <img data-id="${photoCnt++}" class="image__img" src="${photo.urls.small}" alt="${photo.alt_description ? photo.alt_description : 'Regular image'}" title="${photo.alt_description ? photo.alt_description : 'Regular image'}">
+            <img data-id="${myApplication.photoCnt++}" class="image__img" src="${photo.urls.small}" alt="${photo.alt_description ? photo.alt_description : 'Regular image'}" title="${photo.alt_description ? photo.alt_description : 'Regular image'}">
           <div class="image__likes-downloads">
             <h5><ion-icon name="heart"></ion-icon>Likes: <span class="image__likes">${photo.likes}</span></h5>
             <h5><ion-icon name="cloud-download-outline"></ion-icon>Downloads: <span class="image__downloads">${photo.downloads}</span></h5>
@@ -113,41 +124,51 @@ function displayPhotos(photosArray) {
         </div>
       </div>`;
 
-    allPhotos.push([photo.urls.regular, photo.links.html, photo.alt_description ? photo.alt_description : 'Regular image']);
-    imagesView.insertAdjacentHTML('beforeend', photoHtml);
+      myApplication.allPhotos.push([photo.urls.regular, photo.links.html, photo.alt_description ? photo.alt_description : 'Regular image']);
+    myApplication.DOMElements.imagesView.insertAdjacentHTML('beforeend', photoHtml);
   });
 
-  addLightBoxEffect();
+  myApplication.eventListeners.addLightBoxEffect();
 };
 
-function addLightBoxEffect() {
-  const imagesArray = []
-  for (let i = 1; i <= photoToAdd; i++) {
-    document.querySelector(`.image__img[data-id='${photoCnt-i}']`).addEventListener('click', openCloseLightbox);
-  };
-};
-
-[gridViewIcon, listViewIcon].forEach(el => {
-  el.addEventListener('click', switchViewMode);
-});
-
-let observer = new IntersectionObserver(entries => {
+myApplication.observer = new IntersectionObserver(entries => {
   const vh = entries[0].rootBounds.height;
 
   if (entries[0].boundingClientRect.y < 0) {
     console.log("WE HIT THE BOTTOM");
-    getPhotos();
-    updateBottomLine(vh);
+    myApplication.api.getPhotos();
+    myApplication.bottomLine.updateBottomLine(vh);
   } else {
     console.log("NOT AT BOTTOM!!!");
   }
 });
 
-lightboxClose.addEventListener('click', openCloseLightbox);
-lightLeftArrow.addEventListener('click', () => {
-  displayPhotoInLightbox(Number(lightboxATag.dataset['id'])-1);
-});
-lightRightArrow.addEventListener('click', () => {
-  displayPhotoInLightbox(Number(lightboxATag.dataset['id'])+1);
-});
-observer.observe(document.querySelector(".bottom-of-container"));
+myApplication.eventListeners = {
+  addEventsToViewIcons: function() {
+    [myApplication.DOMElements.gridViewIcon, myApplication.DOMElements.listViewIcon].forEach(el => {
+      el.addEventListener('click', myApplication.viewModes.switchViewMode);
+    });
+  },
+
+  addLightBoxEvents: function() {
+    myApplication.DOMElements.lightboxClose.addEventListener('click', myApplication.lightbox.openCloseLightbox);
+    myApplication.DOMElements.lightLeftArrow.addEventListener('click', () => {
+      myApplication.lightbox.displayPhotoInLightbox(Number(myApplication.DOMElements.lightboxATag.dataset['id'])-1);
+    });
+    myApplication.DOMElements.lightRightArrow.addEventListener('click', () => {
+      myApplication.lightbox.displayPhotoInLightbox(Number(myApplication.DOMElements.lightboxATag.dataset['id'])+1);
+    });
+  },
+
+  addLightBoxEffect: function() {
+    const imagesArray = []
+    for (let i = 1; i <= myApplication.photoToAdd; i++) {
+      document.querySelector(`.image__img[data-id='${myApplication.photoCnt-i}']`).addEventListener('click', myApplication.lightbox.openCloseLightbox);
+    };
+  }
+};
+
+myApplication.eventListeners.addEventsToViewIcons();
+myApplication.eventListeners.addLightBoxEvents();
+myApplication.observer.observe(document.querySelector(".bottom-of-container"));
+console.log('PPPP', myApplication)
